@@ -9,5 +9,7 @@ import com.library.dao.model.entities.user.User;
 public interface UserManager {
     void insert(User user) throws ManagerException;
 
-    User findByUserName(String username);
+    User findById(Long id) throws ManagerException;
+
+    User findByIdentity(String identity);
 }

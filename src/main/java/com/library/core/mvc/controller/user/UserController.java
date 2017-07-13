@@ -1,7 +1,7 @@
 package com.library.core.mvc.controller.user;
 
 import com.library.core.mvc.service.user.UserService;
-import com.library.dao.model.entities.user.User;
+import com.library.dao.exceptions.ManagerException;
 import com.library.dto.user.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,15 +28,19 @@ public class UserController {
     @Autowired
     protected UserService service;
 
-    @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void create(@RequestBody UserDTO dto) {
-        dto.setEnabled(true);
-        service.insert(dto);
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> checkId(@PathVariable Long id) {
+        UserDTO dto = null;
+        try {
+            dto = service.findById(id);
+        } catch (ManagerException e) {
+            return new ResponseEntity<UserDTO>(new UserDTO(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<UserDTO>(dto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/check/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> checkUsername(@PathVariable String username) {
-        User user = service.findByUserName(username);
-        return new ResponseEntity<Boolean>(user == null, HttpStatus.OK);
+    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> login(UserDTO dto) {
+        return new ResponseEntity<String>(service.login(dto), HttpStatus.OK);
     }
 }

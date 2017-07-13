@@ -29,8 +29,8 @@ public class User implements ModelObject{
     )
     private Long id;
 
-    @Column(name = "USERNAME", unique = true, nullable = false, length = 45)
-    private String username;
+    @Column(name = "IDENTITY", unique = true, nullable = false, length = 45)
+    private String identity;
 
     @Column(name = "ENABLED", nullable = false)
     private boolean enabled;
@@ -48,6 +48,9 @@ public class User implements ModelObject{
     @Column(name = "ABOUT", length = 500)
     private String about;
 
+    public User() {
+    }
+
     @Override
     public Long getId() {
         return null;
@@ -56,14 +59,6 @@ public class User implements ModelObject{
     @Override
     public void setId(Long id) {
 
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public boolean isEnabled() {
@@ -104,5 +99,13 @@ public class User implements ModelObject{
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 }

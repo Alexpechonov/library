@@ -1,14 +1,14 @@
 package com.library.core.mvc.service.user;
 
 import com.library.core.mvc.service.exception.ServiceException;
-import com.library.dao.model.entities.user.User;
+import com.library.dao.exceptions.ManagerException;
 import com.library.dto.user.UserDTO;
 
 /**
  * Created by user on 13.07.2017.
  */
 public interface UserService {
-    User findByUserName(String username);
+    UserDTO findById(Long id) throws ManagerException;
 
-    void insert(UserDTO dto) throws ServiceException;
+    String login(UserDTO dto) throws ServiceException;
 }

@@ -33,10 +33,19 @@ public class UserManagerImpl implements UserManager{
     }
 
     @Override
-    public User findByUserName(String username) {
+    public User findById(Long id) throws ManagerException {
+        if(id == null) {
+            throw new ManagerException("id mustn't be equals null");
+        }
+        logger.info(UserManagerImpl.class + ".findByPK({})", id);
+        return entityManager.find(User.class, id);
+    }
+
+    @Override
+    public User findByIdentity(String identity) {
         QUser user = QUser.user;
         JPAQuery query = new JPAQuery(entityManager);
-        query.from(user).where(user.username.equalsIgnoreCase(username));
+        query.from(user).where(user.identity.equalsIgnoreCase(identity));
         return query.singleResult(user);
     }
 }

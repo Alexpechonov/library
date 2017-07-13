@@ -16,7 +16,6 @@ public final class JwtEncoder {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256;
 
         JwtBuilder builder = Jwts.builder().setId(payload.getId().toString())
-                .claim("username", payload.getUserName())
                 .claim("admin", payload.getAdmin().toString())
                 .signWith(signatureAlgorithm, signingKey);
 
@@ -30,7 +29,6 @@ public final class JwtEncoder {
                 .getBody();
         JwtPayload payload = new JwtPayload();
         payload.setId(Long.parseLong(claims.getId()));
-        payload.setUserName(claims.get("username").toString());
         payload.setAdmin(claims.get("admin").equals("true"));
         return payload;
     }

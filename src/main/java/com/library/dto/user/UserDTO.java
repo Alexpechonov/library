@@ -8,20 +8,12 @@ import com.library.dto.core.AbstractDTO;
  */
 public class UserDTO extends AbstractDTO {
 
-    private String username;
+    private String identity;
     private Boolean enabled;
     private Role role;
     private String firstName;
     private String lastName;
     private String about;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public Boolean getEnabled() {
         return enabled;
@@ -61,5 +53,13 @@ public class UserDTO extends AbstractDTO {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 }
