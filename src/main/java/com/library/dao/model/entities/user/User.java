@@ -1,7 +1,5 @@
 package com.library.dao.model.entities.user;
 
-import com.library.dao.model.core.ModelObject;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,10 +13,9 @@ import javax.persistence.Table;
 /**
  * Created by user on 13.07.2017.
  */
-
 @Entity
 @Table(name = "USERS")
-public class User implements ModelObject{
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
@@ -29,7 +26,10 @@ public class User implements ModelObject{
     )
     private Long id;
 
-    @Column(name = "IDENTITY", unique = true, nullable = false, length = 45)
+    @Column(name = "USERNAME", unique = true, nullable = false, length = 45)
+    private String userName;
+
+    @Column(name = "IDENTITY", unique = true, nullable = false, length = 60)
     private String identity;
 
     @Column(name = "ENABLED", nullable = false)
@@ -48,17 +48,31 @@ public class User implements ModelObject{
     @Column(name = "ABOUT", length = 500)
     private String about;
 
-    public User() {
-    }
+    @Column(name = "IMAGE", length = 1000)
+    private String image;
 
-    @Override
     public Long getId() {
-        return null;
+        return id;
     }
 
-    @Override
     public void setId(Long id) {
+        this.id = id;
+    }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
     public boolean isEnabled() {
@@ -101,11 +115,11 @@ public class User implements ModelObject{
         this.about = about;
     }
 
-    public String getIdentity() {
-        return identity;
+    public String getImage() {
+        return image;
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public void setImage(String image) {
+        this.image = image;
     }
 }

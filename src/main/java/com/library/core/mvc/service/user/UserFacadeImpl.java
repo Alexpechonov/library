@@ -1,14 +1,15 @@
 package com.library.core.mvc.service.user;
 
-import com.library.core.mvc.service.exception.ServiceException;
+import com.library.core.config.security.SecurityHelper;
+import com.library.dao.exceptions.LoginException;
 import com.library.dao.exceptions.ManagerException;
-import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.user.UserManager;
 import com.library.dto.user.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,12 @@ public class UserFacadeImpl implements UserFacade {
     @Autowired
     private UserManager userManager;
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
+//    @Autowired
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public User findByIdentity(String username) {
-        return userManager.findByIdentity(username);
+    public User findByName(String name) {
+        return userManager.findByUserName(name);
     }
 
     @Override
@@ -48,12 +49,14 @@ public class UserFacadeImpl implements UserFacade {
             return user;
         }
         user.setId(dto.getId());
+        user.setUserName(dto.getUserName());
         user.setIdentity(dto.getIdentity());
         user.setRole(dto.getRole());
         user.setEnabled(dto.getEnabled());
         user.setAbout(dto.getAbout());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
+        user.setImage(dto.getImage());
         return user;
     }
 
@@ -64,29 +67,49 @@ public class UserFacadeImpl implements UserFacade {
             return dto;
         }
         dto.setId(user.getId());
+        dto.setUserName(user.getUserName());
+        dto.setIdentity(user.getIdentity());
         dto.setRole(user.getRole());
         dto.setEnabled(user.isEnabled());
         dto.setAbout(user.getAbout());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
+        dto.setImage(user.getImage());
         return dto;
     }
 
     @Override
-    public UserDTO login(UserDTO dto) {
+    public User login(UserDTO dto) throws LoginException{
         User user = convertToModel(dto);
-        User userByIdentity = findByIdentity(encoder.encode(user.getIdentity()));
+        User userByIdentity = findByName(user.getUserName());
         if (userByIdentity != null) {
-            return convertToDTO(userByIdentity);
+            return authExistUser(userByIdentity, user);
         }
+        return insert(user);
+    }
+
+    @Override
+    public UserDTO getMe() {
+        Authentication authentication = SecurityHelper.getAuthenticationWithCheck();
+        User byUsername = userManager.findByUserName(authentication.getName());
+
+        return convertToDTO(byUsername);
+    }
+
+    private User authExistUser(User user, User newUser) throws LoginException{
+        if (!encoder.matches(newUser.getIdentity(), user.getIdentity())) {
+            throw new LoginException("Bad identity");
+        }
+        return user;
+    }
+
+    private User insert(User user) {
         try {
             user.setIdentity(encoder.encode(user.getIdentity()));
-            user.setRole(Role.ROLE_USER);
-            user.setEnabled(true);
             userManager.insert(user);
         } catch (ManagerException e) {
             logger.error("error in UserManager.insert", e);
         }
-        return convertToDTO(user);
+        return user;
     }
 }

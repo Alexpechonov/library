@@ -1,5 +1,8 @@
 package com.library.dto.core;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by user on 13.07.2017.
  */
@@ -11,7 +14,7 @@ public abstract class AbstractDTO {
         return id;
     }
 
-    public void setId(Long rid) {
-        this.id = rid;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

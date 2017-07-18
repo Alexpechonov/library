@@ -11,5 +11,7 @@ public interface UserManager {
 
     User findById(Long id) throws ManagerException;
 
+    User findByUserName(String userName);
+
     User findByIdentity(String identity);
 }

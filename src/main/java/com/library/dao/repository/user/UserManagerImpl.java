@@ -42,6 +42,14 @@ public class UserManagerImpl implements UserManager{
     }
 
     @Override
+    public User findByUserName(String userName) {
+        QUser user = QUser.user;
+        JPAQuery query = new JPAQuery(entityManager);
+        query.from(user).where(user.userName.equalsIgnoreCase(userName));
+        return query.singleResult(user);
+    }
+
+    @Override
     public User findByIdentity(String identity) {
         QUser user = QUser.user;
         JPAQuery query = new JPAQuery(entityManager);

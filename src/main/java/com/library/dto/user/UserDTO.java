@@ -8,12 +8,30 @@ import com.library.dto.core.AbstractDTO;
  */
 public class UserDTO extends AbstractDTO {
 
+    private String userName;
     private String identity;
+    private String image;
     private Boolean enabled;
     private Role role;
     private String firstName;
     private String lastName;
     private String about;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Boolean getEnabled() {
         return enabled;
