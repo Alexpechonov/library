@@ -1,6 +1,5 @@
 package com.library.core.mvc.service.user;
 
-import com.library.core.mvc.service.exception.ServiceException;
 import com.library.dao.exceptions.LoginException;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.user.User;

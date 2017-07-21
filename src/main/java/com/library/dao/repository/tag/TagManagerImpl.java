@@ -35,10 +35,8 @@ public class TagManagerImpl implements TagManager {
 
     @Override
     public List<Tag> getAll() {
-        QTag tag = QTag.tag;
-        JPAQuery query = new JPAQuery(manager);
-        query.from(tag);
-        return query.list(tag);
+        logger.info("TagManagerImpl.getAll()");
+        return manager.createQuery("select t from Tag t ").getResultList();
     }
 
     @Override

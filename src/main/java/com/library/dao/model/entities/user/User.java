@@ -1,5 +1,7 @@
 package com.library.dao.model.entities.user;
 
+import com.library.dao.model.core.ModelObject;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,7 +17,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "USERS")
-public class User{
+public class User implements ModelObject{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
@@ -51,10 +53,12 @@ public class User{
     @Column(name = "IMAGE", length = 1000)
     private String image;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
