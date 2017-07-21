@@ -1,8 +1,8 @@
 package com.library.dao.repository.user;
 
-import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.user.QUser;
 import com.library.dao.model.entities.user.User;
+import com.library.dao.repository.core.GenericManagerImpl;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,30 +15,16 @@ import javax.persistence.PersistenceContext;
  * Created by user on 13.07.2017.
  */
 @Repository
-public class UserManagerImpl implements UserManager{
+public class UserManagerImpl extends GenericManagerImpl<User> implements UserManager{
 
     private final static Logger logger = LoggerFactory.getLogger(UserManagerImpl.class);
 
     @PersistenceContext
     private EntityManager entityManager;
 
-
     @Override
-    public void insert(User user) throws ManagerException {
-        logger.info(User.class + ".insert()");
-        if(user == null) {
-            throw new ManagerException("model mustn't be equals null");
-        }
-        entityManager.persist(user);
-    }
-
-    @Override
-    public User findById(Long id) throws ManagerException {
-        if(id == null) {
-            throw new ManagerException("id mustn't be equals null");
-        }
-        logger.info(UserManagerImpl.class + ".findByPK({})", id);
-        return entityManager.find(User.class, id);
+    protected Class<User> getModelClass() {
+        return User.class;
     }
 
     @Override
@@ -57,14 +43,4 @@ public class UserManagerImpl implements UserManager{
         return query.singleResult(user);
     }
 
-    @Override
-    public User update(User user) throws ManagerException {
-        if(user == null) {
-            throw new ManagerException("Error while update user. User mustn't be null.");
-        }
-        logger.info(User.class.getSimpleName() + ".update() id={}", user.getId());
-        User merge = entityManager.merge(user);
-        entityManager.flush();
-        return merge;
-    }
 }

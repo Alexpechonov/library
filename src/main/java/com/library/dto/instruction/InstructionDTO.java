@@ -2,10 +2,10 @@ package com.library.dto.instruction;
 
 import com.library.dto.core.AbstractDTO;
 import com.library.dto.tag.TagDTO;
+import com.library.dto.user.UserDTO;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by user on 21.07.2017.
@@ -14,7 +14,8 @@ public class InstructionDTO extends AbstractDTO {
 
     private String name;
     private List<StepDTO> steps;
-    private Set<TagDTO> tags;
+    private List<TagDTO> tags;
+    private UserDTO user;
     private Date creationDate;
     private Date lastModifiedDate;
 
@@ -50,11 +51,19 @@ public class InstructionDTO extends AbstractDTO {
         this.steps = steps;
     }
 
-    public Set<TagDTO> getTags() {
+    public List<TagDTO> getTags() {
         return tags;
     }
 
-    public void setTags(Set<TagDTO> tags) {
+    public void setTags(List<TagDTO> tags) {
         this.tags = tags;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 }

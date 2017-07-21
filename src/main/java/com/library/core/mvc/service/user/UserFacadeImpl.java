@@ -1,10 +1,14 @@
 package com.library.core.mvc.service.user;
 
 import com.library.core.config.security.SecurityHelper;
+import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.dao.exceptions.LoginException;
 import com.library.dao.exceptions.ManagerException;
+import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.user.User;
+import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.user.UserManager;
+import com.library.dto.instruction.InstructionDTO;
 import com.library.dto.user.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +24,7 @@ import javax.transaction.Transactional;
  */
 @Service
 @Transactional
-public class UserFacadeImpl implements UserFacade {
+public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User> implements UserFacade {
 
     private static final Logger logger = LoggerFactory.getLogger(UserFacadeImpl.class);
 
@@ -31,16 +35,14 @@ public class UserFacadeImpl implements UserFacade {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public User findByName(String name) {
-        return userManager.findByUserName(name);
+    protected UserManager getManager() {
+        return userManager;
     }
 
     @Override
-    public UserDTO findById(Long id) throws ManagerException {
-        User user = userManager.findById(id);
-        return convertToDTO(user);
+    public User findByName(String name) {
+        return userManager.findByUserName(name);
     }
-
 
     @Override
     public User convertToModel(UserDTO dto) {

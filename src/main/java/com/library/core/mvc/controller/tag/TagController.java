@@ -29,6 +29,6 @@ public class TagController {
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TagDTO>> getAll() {
-        return  new ResponseEntity<List<TagDTO>>(service.getAll(), HttpStatus.OK);
+        return  new ResponseEntity<List<TagDTO>>(service.findAll(), HttpStatus.OK);
     }
 }

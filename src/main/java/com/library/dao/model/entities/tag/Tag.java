@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,7 +39,7 @@ public class Tag implements ModelObject {
     @JoinTable(name = "INSTRUCTION_TAG",
             joinColumns = @JoinColumn(name = "TAG_ID"),
             inverseJoinColumns = @JoinColumn(name = "INSTRUCTION_ID"))
-    private Set<Instruction> instructions;
+    private List<Instruction> instructions;
 
     @Override
     public Long getId() {
@@ -58,11 +59,11 @@ public class Tag implements ModelObject {
         this.name = name;
     }
 
-    public Set<Instruction> getInstructions() {
+    public List<Instruction> getInstructions() {
         return instructions;
     }
 
-    public void setInstructions(Set<Instruction> instructions) {
+    public void setInstructions(List<Instruction> instructions) {
         this.instructions = instructions;
     }
 }

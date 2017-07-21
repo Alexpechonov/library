@@ -1,15 +1,22 @@
 package com.library.core.mvc.service.instruction;
 
 import com.library.core.mvc.service.core.GenericFacadeImpl;
+import com.library.core.mvc.service.user.UserFacadeImpl;
+import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.instruction.Part;
 import com.library.dao.model.entities.instruction.Step;
 import com.library.dao.model.entities.tag.Tag;
+import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.instruction.InstructionManager;
+import com.library.dao.repository.user.UserManager;
 import com.library.dto.instruction.InstructionDTO;
 import com.library.dto.instruction.PartDTO;
 import com.library.dto.instruction.StepDTO;
 import com.library.dto.tag.TagDTO;
+import com.library.dto.user.UserDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +34,13 @@ import java.util.Set;
 public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager, InstructionDTO, Instruction>
         implements InstructionFacade {
 
+    private static final Logger logger = LoggerFactory.getLogger(InstructionFacadeImpl.class);
+
     @Autowired
     private InstructionManager manager;
+
+    @Autowired
+    private UserManager userManager;
 
     @Override
     protected InstructionManager getManager() { return manager; }
@@ -42,6 +54,13 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         result.setLastModifiedDate(dto.getLastModifiedDate());
         result.setSteps(convertStepsToModel(dto.getSteps()));
         result.setTags(convertTagsToModel(dto.getTags()));
+        User user = null;
+        try {
+            user = userManager.findById(dto.getUser().getId());
+        } catch (ManagerException e) {
+            logger.error("error in UserManager.findById", e);
+        }
+        result.setUser(user);
         return result;
     }
 
@@ -54,7 +73,16 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         dto.setCreationDate(instruction.getCreationDate());
         dto.setSteps(convertStepsToDTO(instruction.getSteps()));
         dto.setTags(convertTagsToDTO(instruction.getTags()));
-        return null;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(instruction.getUser().getId());
+        userDTO.setUserName(instruction.getUser().getUserName());
+        userDTO.setRole(instruction.getUser().getRole());
+        userDTO.setEnabled(instruction.getUser().isEnabled());
+        userDTO.setAbout(instruction.getUser().getAbout());
+        userDTO.setFirstName(instruction.getUser().getFirstName());
+        userDTO.setLastName(instruction.getUser().getLastName());
+        userDTO.setImage(instruction.getUser().getImage());
+        return dto;
     }
 
     private List<Step> convertStepsToModel(List<StepDTO> steps) {
@@ -88,8 +116,8 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         return part;
     }
 
-    private Set<Tag> convertTagsToModel(Set<TagDTO> tags) {
-        Set<Tag> result = new HashSet<>();
+    private List<Tag> convertTagsToModel(List<TagDTO> tags) {
+        List<Tag> result = new ArrayList<>();
         for (TagDTO dto : tags) {
             result.add(convertTagToModel(dto));
         }
@@ -134,8 +162,8 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         return dto;
     }
 
-    private Set<TagDTO> convertTagsToDTO(Set<Tag> tags) {
-        Set<TagDTO> result = new HashSet<>();
+    private List<TagDTO> convertTagsToDTO(List<Tag> tags) {
+        List<TagDTO> result = new ArrayList<>();
         for (Tag tag : tags) {
             result.add(convertTagToDTO(tag));
         }

@@ -1,5 +1,6 @@
 package com.library.core.mvc.service.tag;
 
+import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.tag.Tag;
@@ -19,30 +20,15 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class TagFacadeImpl implements TagFacade {
+public class TagFacadeImpl extends GenericFacadeImpl<TagManager, TagDTO, Tag> implements TagFacade {
     private static final Logger logger = LoggerFactory.getLogger(TagFacadeImpl.class);
 
     @Autowired
     private TagManager manager;
 
     @Override
-    public List<TagDTO> getAll() {
-        return convertToDtoList(manager.getAll());
-    }
+    protected TagManager getManager() { return manager; }
 
-    @Override
-    public void insert(TagDTO dto) throws ServiceException {
-        Tag tag = convertToModel(dto);
-        Tag tagByName = manager.findByName(tag.getName());
-        if (tagByName != null) {
-            throw new ServiceException("tag with name '" + tag.getName() + "' already exist");
-        }
-        try {
-            manager.insert(tag);
-        } catch (ManagerException e) {
-            logger.error("error in UserManager.insert", e);
-        }
-    }
 
     @Override
     public Tag convertToModel(TagDTO dto) {
@@ -73,4 +59,5 @@ public class TagFacadeImpl implements TagFacade {
         }
         return result;
     }
+
 }

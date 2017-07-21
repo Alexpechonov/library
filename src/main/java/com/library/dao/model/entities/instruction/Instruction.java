@@ -3,6 +3,7 @@ package com.library.dao.model.entities.instruction;
 
 import com.library.dao.model.core.ModelObject;
 import com.library.dao.model.entities.tag.Tag;
+import com.library.dao.model.entities.user.User;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -21,7 +23,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by user on 21.07.2017.
@@ -50,7 +51,11 @@ public class Instruction implements ModelObject {
     @JoinTable(name = "INSTRUCTION_TAG",
             joinColumns = @JoinColumn(name = "INSTRUCTION_ID"),
             inverseJoinColumns = @JoinColumn(name ="TAG_ID"))
-    private Set<Tag> tags;
+    private List<Tag> tags;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
 
     @Column(name = "CREATION_DATE")
     @Temporal(value = TemporalType.TIMESTAMP)
@@ -86,14 +91,6 @@ public class Instruction implements ModelObject {
         this.steps = steps;
     }
 
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
-    }
-
     public Date getCreationDate() {
         return creationDate;
     }
@@ -108,5 +105,17 @@ public class Instruction implements ModelObject {
 
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public List<Tag> getTags() { return tags; }
+
+    public void setTags(List<Tag> tags) { this.tags = tags; }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
