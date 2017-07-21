@@ -56,4 +56,15 @@ public class UserManagerImpl implements UserManager{
         query.from(user).where(user.identity.equalsIgnoreCase(identity));
         return query.singleResult(user);
     }
+
+    @Override
+    public User update(User user) throws ManagerException {
+        if(user == null) {
+            throw new ManagerException("Error while update user. User mustn't be null.");
+        }
+        logger.info(User.class.getSimpleName() + ".update() id={}", user.getId());
+        User merge = entityManager.merge(user);
+        entityManager.flush();
+        return merge;
+    }
 }

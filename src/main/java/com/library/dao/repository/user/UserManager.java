@@ -14,4 +14,6 @@ public interface UserManager {
     User findByUserName(String userName);
 
     User findByIdentity(String identity);
+
+    User update(User user) throws ManagerException;
 }

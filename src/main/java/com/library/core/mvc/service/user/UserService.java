@@ -14,4 +14,6 @@ public interface UserService {
     String login(UserDTO dto) throws ServiceException, LoginException;
 
     UserDTO getMe();
+
+    UserDTO update(UserDTO dto) throws ManagerException;
 }

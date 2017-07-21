@@ -21,4 +21,6 @@ public interface UserFacade {
     User login(UserDTO dto) throws LoginException;
 
     UserDTO getMe();
+
+    UserDTO update(UserDTO dto) throws ManagerException;
 }

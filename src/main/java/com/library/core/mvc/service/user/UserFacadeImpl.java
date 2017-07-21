@@ -68,7 +68,6 @@ public class UserFacadeImpl implements UserFacade {
         }
         dto.setId(user.getId());
         dto.setUserName(user.getUserName());
-        dto.setIdentity(user.getIdentity());
         dto.setRole(user.getRole());
         dto.setEnabled(user.isEnabled());
         dto.setAbout(user.getAbout());
@@ -94,6 +93,18 @@ public class UserFacadeImpl implements UserFacade {
         User byUsername = userManager.findByUserName(authentication.getName());
 
         return convertToDTO(byUsername);
+    }
+
+    @Override
+    public UserDTO update(UserDTO dto) throws ManagerException {
+        User user = convertToModel(dto);
+        user.setId(getMe().getId());
+        user.setUserName(getMe().getUserName());
+        if(user.getIdentity() == null) {
+            User currentUser = userManager.findById(user.getId());
+            user.setIdentity(currentUser.getIdentity());
+        }
+        return convertToDTO(userManager.update(user));
     }
 
     private User authExistUser(User user, User newUser) throws LoginException{

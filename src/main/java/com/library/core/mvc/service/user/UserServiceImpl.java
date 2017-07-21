@@ -1,6 +1,5 @@
 package com.library.core.mvc.service.user;
 
-import com.library.core.config.security.SecurityHelper;
 import com.library.core.config.security.model.JwtUserDetails;
 import com.library.core.config.security.service.AuthenticationHelper;
 import com.library.core.mvc.service.exception.ServiceException;
@@ -9,7 +8,6 @@ import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.user.User;
 import com.library.dto.user.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,5 +37,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getMe() {
         return userFacade.getMe();
+    }
+
+    @Override
+    public UserDTO update(UserDTO dto) throws ManagerException {
+        return userFacade.update(dto);
     }
 }

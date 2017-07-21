@@ -55,9 +55,20 @@ public class UserController {
         return new ResponseEntity<String>(token, HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/me", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getMe() {
         return new ResponseEntity<UserDTO>(service.getMe(), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> update(@RequestBody UserDTO dto) {
+        UserDTO user = null;
+        try {
+            user = service.update(dto);
+        } catch (ManagerException e) {
+            logger.error("error in UserService.update()");
+        }
+        return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 }
