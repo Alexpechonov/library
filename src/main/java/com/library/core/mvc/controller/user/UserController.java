@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin
-@RequestMapping("/api/user")
+@RequestMapping("/api/open/user")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -44,8 +43,6 @@ public class UserController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> login(@RequestBody UserDTO dto) {
-        dto.setRole(Role.ROLE_USER);
-        dto.setEnabled(true);
         String token;
         try {
             token = service.login(dto);
@@ -53,22 +50,5 @@ public class UserController {
             return new ResponseEntity<String>(new String(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<String>(token, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/me", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> getMe() {
-        return new ResponseEntity<UserDTO>(service.getMe(), HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping(value = "", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> update(@RequestBody UserDTO dto) {
-        UserDTO user = null;
-        try {
-            user = service.update(dto);
-        } catch (ManagerException e) {
-            logger.error("error in UserService.update()");
-        }
-        return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
 }

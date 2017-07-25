@@ -5,6 +5,7 @@ import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.dao.exceptions.LoginException;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.instruction.Instruction;
+import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.user.UserManager;
@@ -80,16 +81,6 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
     }
 
     @Override
-    public User login(UserDTO dto) throws LoginException{
-        User user = convertToModel(dto);
-        User userByIdentity = findByName(user.getUserName());
-        if (userByIdentity != null) {
-            return authExistUser(userByIdentity, user);
-        }
-        return insert(user);
-    }
-
-    @Override
     public UserDTO getMe() {
         Authentication authentication = SecurityHelper.getAuthenticationWithCheck();
         User byUsername = userManager.findByUserName(authentication.getName());
@@ -109,20 +100,24 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
         return convertToDTO(userManager.update(user));
     }
 
-    private User authExistUser(User user, User newUser) throws LoginException{
-        if (!encoder.matches(newUser.getIdentity(), user.getIdentity())) {
+    @Override
+    public User authExistUser(User user, String identity) throws LoginException{
+        if (!encoder.matches(identity, user.getIdentity())) {
             throw new LoginException("Bad identity");
         }
         return user;
     }
 
-    private User insert(User user) {
+    @Override
+    public UserDTO insert(UserDTO dto) {
         try {
-            user.setIdentity(encoder.encode(user.getIdentity()));
-            userManager.insert(user);
+            dto.setIdentity(encoder.encode(dto.getIdentity()));
+            dto.setRole(Role.ROLE_USER);
+            dto.setEnabled(true);
+            userManager.insert(convertToModel(dto));
         } catch (ManagerException e) {
             logger.error("error in UserManager.insert", e);
         }
-        return user;
+        return dto;
     }
 }

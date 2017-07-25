@@ -15,7 +15,7 @@ public interface UserFacade extends GenericFacade<UserDTO, User> {
 
     User findByName(String username);
 
-    User login(UserDTO dto) throws LoginException;
-
     UserDTO getMe();
+
+    User authExistUser(User user, String identity) throws LoginException;
 }

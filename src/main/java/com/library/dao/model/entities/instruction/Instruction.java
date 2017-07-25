@@ -40,11 +40,11 @@ public class Instruction implements ModelObject {
     )
     private Long id;
 
-    @Column(name = "NAME", unique = true, nullable = false, length = 45)
+    @Column(name = "NAME", length = 45)
     private String name;
 
-    @JoinColumn(name = "STEPS")
-    @OneToMany(targetEntity = Step.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "INSTRUCTION_ID")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Step> steps;
 
     @ManyToMany(targetEntity = Tag.class)

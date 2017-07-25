@@ -1,6 +1,10 @@
 package com.library.core.mvc.service.instruction;
 
 import com.library.core.mvc.service.core.GenericFacadeImpl;
+import com.library.core.mvc.service.exception.ServiceException;
+import com.library.core.mvc.service.part.PartFacade;
+import com.library.core.mvc.service.step.StepFacade;
+import com.library.core.mvc.service.tag.TagFacade;
 import com.library.core.mvc.service.user.UserFacadeImpl;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.instruction.Instruction;
@@ -9,6 +13,7 @@ import com.library.dao.model.entities.instruction.Step;
 import com.library.dao.model.entities.tag.Tag;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.instruction.InstructionManager;
+import com.library.dao.repository.tag.TagManager;
 import com.library.dao.repository.user.UserManager;
 import com.library.dto.instruction.InstructionDTO;
 import com.library.dto.instruction.PartDTO;
@@ -22,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,8 +48,30 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     @Autowired
     private UserManager userManager;
 
+    @Autowired
+    private TagFacade tagFacade;
+
+    @Autowired
+    private StepFacade stepFacade;
+
     @Override
     protected InstructionManager getManager() { return manager; }
+
+    @Override
+    public InstructionDTO insert(InstructionDTO dto) throws ServiceException {
+        dto.setCreationDate(new Date());
+        dto.setLastModifiedDate(new Date());
+        return super.insert(dto);
+    }
+
+    @Override
+    public InstructionDTO update(InstructionDTO dto) throws ManagerException {
+        dto.setLastModifiedDate(new Date());
+        tagFacade.insertListIfNotExist(dto.getTags());
+        dto.setTags(tagFacade.getUpdatedTags(dto.getTags()));
+        dto.setSteps(stepFacade.getUploadedImages(dto.getSteps()));
+        return super.update(dto);
+    }
 
     @Override
     public Instruction convertToModel(InstructionDTO dto) {
@@ -88,32 +116,9 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     private List<Step> convertStepsToModel(List<StepDTO> steps) {
         List<Step> result = new ArrayList<>(0);
         for (StepDTO dto : steps) {
-            result.add(convertStepToModel(dto));
+            result.add(stepFacade.convertToModel(dto));
         }
         return result;
-    }
-
-    private Step convertStepToModel(StepDTO dto) {
-        Step step = new Step();
-        step.setId(dto.getId());
-        step.setParts(convertPartsToModel(dto.getParts()));
-        return step;
-    }
-
-    private List<Part> convertPartsToModel(List<PartDTO> parts) {
-        List<Part> result = new ArrayList<>(0);
-        for (PartDTO dto : parts) {
-            result.add(convertPartToModel(dto));
-        }
-        return result;
-    }
-
-    private Part convertPartToModel(PartDTO dto) {
-        Part part = new Part();
-        part.setId(dto.getId());
-        part.setData(dto.getData());
-        part.setType(dto.getType());
-        return part;
     }
 
     private List<Tag> convertTagsToModel(List<TagDTO> tags) {
@@ -134,32 +139,9 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     private List<StepDTO> convertStepsToDTO(List<Step> steps) {
         List<StepDTO> result = new ArrayList<>(0);
         for (Step step : steps) {
-            result.add(convertStepToDTO(step));
+            result.add(stepFacade.convertToDTO(step));
         }
         return result;
-    }
-
-    private StepDTO convertStepToDTO(Step step) {
-        StepDTO dto = new StepDTO();
-        dto.setId(step.getId());
-        dto.setParts(convertPartsToDTO(step.getParts()));
-        return dto;
-    }
-
-    private List<PartDTO> convertPartsToDTO(List<Part> parts) {
-        List<PartDTO> result = new ArrayList<>(0);
-        for (Part part : parts) {
-            result.add(convertPartToDTO(part));
-        }
-        return result;
-    }
-
-    private PartDTO convertPartToDTO(Part part) {
-        PartDTO dto = new PartDTO();
-        part.setId(part.getId());
-        part.setData(part.getData());
-        part.setType(part.getType());
-        return dto;
     }
 
     private List<TagDTO> convertTagsToDTO(List<Tag> tags) {

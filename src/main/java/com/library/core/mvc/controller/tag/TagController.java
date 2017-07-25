@@ -20,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @CrossOrigin
-@RequestMapping("/api/tag")
+@RequestMapping("/api/open/tag")
 public class TagController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagController.class);
 

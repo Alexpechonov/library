@@ -32,7 +32,15 @@ public class UserServiceImpl extends GenericServiceImpl<UserFacade, UserDTO> imp
 
     @Override
     public String login(UserDTO dto) throws ServiceException, LoginException {
-        User user = userFacade.login(dto);
+        User user = null;
+        User userByIdentity = userFacade.findByName(dto.getUserName());
+        if (userByIdentity != null) {
+            user = userFacade.authExistUser(userByIdentity, dto.getIdentity());
+        } else {
+            dto = userFacade.insert(dto);
+            dto.setId(userFacade.findByName(dto.getUserName()).getId());
+            user = userFacade.convertToModel(dto);
+        }
         JwtUserDetails details = new JwtUserDetails(user);
         return authenticationHelper.generateToken(details.getId());
     }

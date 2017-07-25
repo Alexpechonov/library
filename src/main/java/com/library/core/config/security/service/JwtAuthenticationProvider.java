@@ -60,6 +60,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new InvalidTokenAuthenticationException("Token does not contain existed user id.");
         }
 
+        if(!user.isEnabled()) {
+            throw new InvalidTokenAuthenticationException("User blocked");
+        }
+
         // Return authenticated Authentication
         JwtUserDetails userDetails = new JwtUserDetails(user);
         return new JwtAuthenticationToken(userDetails);

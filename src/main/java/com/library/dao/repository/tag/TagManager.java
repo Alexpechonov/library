@@ -13,4 +13,5 @@ import java.util.List;
 public interface TagManager extends GenericManager<Tag> {
 
     Tag findByName(String name);
+
 }

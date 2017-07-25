@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class StepDTO extends AbstractDTO {
 
+    private String name;
     private List<PartDTO> parts;
 
     public List<PartDTO> getParts() {
@@ -17,5 +18,13 @@ public class StepDTO extends AbstractDTO {
 
     public void setParts(List<PartDTO> parts) {
         this.parts = parts;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

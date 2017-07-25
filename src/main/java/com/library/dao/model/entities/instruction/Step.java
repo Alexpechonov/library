@@ -3,6 +3,7 @@ package com.library.dao.model.entities.instruction;
 import com.library.dao.model.core.ModelObject;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,8 +31,11 @@ public class Step implements ModelObject {
     )
     private Long id;
 
-    @JoinColumn(name = "PARTS")
-    @OneToMany(targetEntity = Part.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Column(name = "NAME", length = 45)
+    private String name;
+
+    @JoinColumn(name = "STEP_ID")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Part> parts;
 
     @Override
@@ -50,5 +54,13 @@ public class Step implements ModelObject {
 
     public void setParts(List<Part> parts) {
         this.parts = parts;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

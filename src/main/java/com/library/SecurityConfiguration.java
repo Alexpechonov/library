@@ -32,7 +32,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private static final String[] allowedUrlsForPost = new String[]{ "/api/user/login" };
+    private static final String[] allowedUrls = new String[]{ "/api/open/**" };
 
     @Autowired
     private JwtAuthenticationProvider jwtAuthenticationProvider;
@@ -79,7 +79,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers(HttpMethod.POST, allowedUrlsForPost)
+                .antMatchers(allowedUrls)
                 .antMatchers(HttpMethod.OPTIONS, "/**");
     }
 

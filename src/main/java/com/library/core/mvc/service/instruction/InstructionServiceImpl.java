@@ -1,6 +1,7 @@
 package com.library.core.mvc.service.instruction;
 
 import com.library.core.mvc.service.core.GenericServiceImpl;
+import com.library.dao.exceptions.ManagerException;
 import com.library.dto.instruction.InstructionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

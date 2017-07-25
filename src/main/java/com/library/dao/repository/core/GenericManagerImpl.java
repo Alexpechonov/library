@@ -27,7 +27,7 @@ public abstract class GenericManagerImpl<MODEL extends ModelObject> implements G
         if (id == null) {
             throw new ManagerException("id mustn't be equals null");
         }
-        logger.info(getModelClass().getSimpleName() + ".findByPK({})", id);
+        logger.info(getModelClass().getSimpleName() + ".findById({})", id);
         return entityManager.find(getModelClass(), id);
     }
 
