@@ -1,13 +1,8 @@
 package com.library.core.mvc.service.part;
 
 import com.library.core.mvc.service.core.GenericFacadeImpl;
-import com.library.core.mvc.service.exception.AccessException;
 import com.library.core.mvc.service.user.UserFacade;
-import com.library.dao.exceptions.ManagerException;
-import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.instruction.Part;
-import com.library.dao.model.entities.instruction.PartType;
-import com.library.dao.model.entities.instruction.Step;
 import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.part.PartManager;
 import com.library.dao.repository.step.StepManager;
@@ -18,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 /**
  * Created by user on 25.07.2017.
@@ -62,16 +56,5 @@ public class PartFacadeImpl extends GenericFacadeImpl<PartManager, PartDTO, Part
         dto.setData(part.getData());
         dto.setType(part.getType());
         return dto;
-    }
-
-    private boolean checkExist(Instruction instruction, Long id) {
-        for(Step step: instruction.getSteps()) {
-            for(Part part: step.getParts()) {
-                if(part.getId().equals(id)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }
