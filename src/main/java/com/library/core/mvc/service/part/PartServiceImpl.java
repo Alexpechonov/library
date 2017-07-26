@@ -20,9 +20,4 @@ public class PartServiceImpl extends GenericServiceImpl<PartFacade, PartDTO> imp
     protected PartFacade getFacade() {
         return facade;
     }
-
-    @Override
-    public PartDTO update(PartDTO dto, Long id) throws AccessException, ManagerException {
-        return facade.update(dto, id);
-    }
 }

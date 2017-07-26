@@ -12,8 +12,4 @@ import java.util.List;
  * Created by user on 25.07.2017.
  */
 public interface PartFacade extends GenericFacade<PartDTO, Part> {
-
-    PartDTO update(PartDTO dto, Long id) throws AccessException, ManagerException;
-
-    List<PartDTO> getUpdatedImages(List<PartDTO> parts) throws ManagerException;
 }

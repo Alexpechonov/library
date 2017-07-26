@@ -66,12 +66,4 @@ public class StepFacadeImpl extends GenericFacadeImpl<StepManager, StepDTO, Step
         }
         return result;
     }
-
-    @Override
-    public List<StepDTO> getUploadedImages(List<StepDTO> steps) throws ManagerException {
-        for (StepDTO dto: steps) {
-            dto.setParts(partFacade.getUpdatedImages(dto.getParts()));
-        }
-        return steps;
-    }
 }

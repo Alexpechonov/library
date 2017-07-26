@@ -69,7 +69,6 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         dto.setLastModifiedDate(new Date());
         tagFacade.insertListIfNotExist(dto.getTags());
         dto.setTags(tagFacade.getUpdatedTags(dto.getTags()));
-        dto.setSteps(stepFacade.getUploadedImages(dto.getSteps()));
         return super.update(dto);
     }
 

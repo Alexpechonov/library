@@ -11,6 +11,4 @@ import java.util.List;
  * Created by user on 25.07.2017.
  */
 public interface StepFacade extends GenericFacade<StepDTO, Step> {
-
-    List<StepDTO> getUploadedImages(List<StepDTO> steps) throws ManagerException;
 }

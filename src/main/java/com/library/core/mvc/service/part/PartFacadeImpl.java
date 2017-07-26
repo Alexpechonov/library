@@ -47,34 +47,6 @@ public class PartFacadeImpl extends GenericFacadeImpl<PartManager, PartDTO, Part
     }
 
     @Override
-    public PartDTO update(PartDTO dto, Long id) throws AccessException, ManagerException {
-        Instruction instruction = null;
-        try {
-            instruction = instructionManager.findById(id);
-            if(instruction.getUser().getId() != userFacade.getMe().getId()) {
-                throw new AccessException("Its not yours instruction");
-            }
-        } catch (ManagerException e) {
-            LOGGER.error("Error in InstructionManager.findById()");
-        }
-        if(checkExist(instruction, dto.getId()) == true) {
-            return super.update(dto);
-        }
-        return dto;
-
-    }
-
-    @Override
-    public List<PartDTO> getUpdatedImages(List<PartDTO> parts) throws ManagerException{
-        for(PartDTO dto: parts) {
-            if(dto.getType().equals(PartType.TYPE_IMAGE) && dto.getId() != null) {
-                dto.setData(manager.findById(dto.getId()).getData());
-            }
-        }
-        return parts;
-    }
-
-    @Override
     public Part convertToModel(PartDTO dto) {
         Part part = new Part();
         part.setId(dto.getId());
