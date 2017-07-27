@@ -35,6 +35,9 @@ public class Part implements ModelObject {
     @Column(name = "DATA", length = 500)
     private String data;
 
+    @Column(name = "POSITION")
+    private Integer position;
+
     @Override
     public Long getId() {
         return id;
@@ -59,5 +62,13 @@ public class Part implements ModelObject {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }

@@ -44,7 +44,7 @@ public class Instruction implements ModelObject {
     private String name;
 
     @JoinColumn(name = "INSTRUCTION_ID")
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Step> steps;
 
     @ManyToMany(targetEntity = Tag.class)

@@ -2,10 +2,8 @@ package com.library.core.mvc.service.instruction;
 
 import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
-import com.library.core.mvc.service.part.PartFacade;
 import com.library.core.mvc.service.step.StepFacade;
 import com.library.core.mvc.service.tag.TagFacade;
-import com.library.core.mvc.service.user.UserFacadeImpl;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.instruction.Part;
@@ -13,10 +11,8 @@ import com.library.dao.model.entities.instruction.Step;
 import com.library.dao.model.entities.tag.Tag;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.instruction.InstructionManager;
-import com.library.dao.repository.tag.TagManager;
 import com.library.dao.repository.user.UserManager;
 import com.library.dto.instruction.InstructionDTO;
-import com.library.dto.instruction.PartDTO;
 import com.library.dto.instruction.StepDTO;
 import com.library.dto.tag.TagDTO;
 import com.library.dto.user.UserDTO;
@@ -27,10 +23,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by user on 21.07.2017.
@@ -69,7 +65,52 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         dto.setLastModifiedDate(new Date());
         tagFacade.insertListIfNotExist(dto.getTags());
         dto.setTags(tagFacade.getUpdatedTags(dto.getTags()));
-        return super.update(dto);
+        Instruction instruction =  addPositions(convertToModel(dto));
+        return convertToDTO(manager.update(instruction));
+    }
+
+    private Instruction addPositions(Instruction instruction) {
+        for(int i = 0; i < instruction.getSteps().size(); i++) {
+            instruction.getSteps().get(i).setPosition(i);
+            for(int j = 0; j < instruction.getSteps().get(i).getParts().size(); j++) {
+                instruction.getSteps().get(i).getParts().get(j).setPosition(j);
+            }
+        }
+        return instruction;
+    }
+
+    @Override
+    public InstructionDTO findById(Long id) throws ManagerException {
+        Instruction instruction = manager.findById(id);
+        instruction = sortSteps(instruction);
+        instruction = sortParts(instruction);
+        return convertToDTO(instruction);
+    }
+
+    private Instruction sortSteps(Instruction instruction) {
+        if (instruction.getSteps().size() > 0) {
+            Collections.sort(instruction.getSteps(), new Comparator<Step>() {
+                @Override
+                public int compare(final Step object1, final Step object2) {
+                    return object1.getPosition().compareTo(object2.getPosition());
+                }
+            });
+        }
+        return instruction;
+    }
+
+    private Instruction sortParts(Instruction instruction) {
+        for (Step step: instruction.getSteps()) {
+            if (step.getParts().size() > 0) {
+                Collections.sort(step.getParts(), new Comparator<Part>() {
+                    @Override
+                    public int compare(final Part object1, final Part object2) {
+                        return object1.getPosition().compareTo(object2.getPosition());
+                    }
+                });
+            }
+        }
+        return instruction;
     }
 
     @Override

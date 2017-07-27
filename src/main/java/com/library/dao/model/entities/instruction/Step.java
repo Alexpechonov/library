@@ -34,8 +34,11 @@ public class Step implements ModelObject {
     @Column(name = "NAME", length = 45)
     private String name;
 
+    @Column(name = "POSITION")
+    private Integer position;
+
     @JoinColumn(name = "STEP_ID")
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Part> parts;
 
     @Override
@@ -62,5 +65,13 @@ public class Step implements ModelObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }
