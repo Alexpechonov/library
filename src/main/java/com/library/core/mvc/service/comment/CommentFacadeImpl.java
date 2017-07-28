@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by user on 28.07.2017.
@@ -72,5 +73,11 @@ public class CommentFacadeImpl extends GenericFacadeImpl<CommentManager, Comment
     public CommentDTO insert(CommentDTO dto) throws ServiceException {
         dto.setCreationDate(new Date());
         return super.insert(dto);
+    }
+
+
+    @Override
+    public List<CommentDTO> getAllByStep(Long stepId) {
+        return convertToDTOList(manager.getAllByStep(stepId));
     }
 }

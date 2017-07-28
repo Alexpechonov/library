@@ -5,6 +5,8 @@ import com.library.dto.comment.CommentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by user on 28.07.2017.
  */
@@ -17,5 +19,10 @@ public class CommentServiceImpl extends GenericServiceImpl<CommentFacade, Commen
     @Override
     protected CommentFacade getFacade() {
         return facade;
+    }
+
+    @Override
+    public List<CommentDTO> getAllByStep(Long stepId) {
+        return getFacade().getAllByStep(stepId);
     }
 }
