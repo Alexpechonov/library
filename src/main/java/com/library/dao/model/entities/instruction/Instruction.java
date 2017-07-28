@@ -2,6 +2,7 @@ package com.library.dao.model.entities.instruction;
 
 
 import com.library.dao.model.core.ModelObject;
+import com.library.dao.model.entities.category.Category;
 import com.library.dao.model.entities.tag.Tag;
 import com.library.dao.model.entities.user.User;
 
@@ -56,6 +57,10 @@ public class Instruction implements ModelObject {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID")
+    private Category category;
 
     @Column(name = "CREATION_DATE")
     @Temporal(value = TemporalType.TIMESTAMP)
@@ -117,5 +122,13 @@ public class Instruction implements ModelObject {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

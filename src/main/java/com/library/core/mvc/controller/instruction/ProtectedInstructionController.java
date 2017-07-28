@@ -34,7 +34,7 @@ public class ProtectedInstructionController extends InstructionController {
         try {
             result = service.insert(dto);
         } catch (ServiceException e) {
-            LOGGER.error("error in InstructionController.create");
+            LOGGER.error("error in ProtectedInstructionController.create");
         }
         return new ResponseEntity<InstructionDTO>(result, HttpStatus.OK);
     }

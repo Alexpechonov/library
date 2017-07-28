@@ -150,6 +150,7 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         userDTO.setFirstName(instruction.getUser().getFirstName());
         userDTO.setLastName(instruction.getUser().getLastName());
         userDTO.setImage(instruction.getUser().getImage());
+        dto.setUser(userDTO);
         return dto;
     }
 
