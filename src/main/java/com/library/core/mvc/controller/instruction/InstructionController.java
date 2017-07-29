@@ -35,13 +35,19 @@ public class InstructionController {
         try {
             dto = service.findById(id);
         } catch (ManagerException e) {
-            return new ResponseEntity<InstructionDTO>(new InstructionDTO(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new InstructionDTO(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<InstructionDTO>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<InstructionDTO>> getAll() {
-        return new ResponseEntity<List<InstructionDTO>>(service.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<InstructionDTO>> getAllForUser(@PathVariable Long id) {
+        List<InstructionDTO> instructions = service.findAllByUser(id);
+        return new ResponseEntity<>(instructions, HttpStatus.OK);
     }
 }

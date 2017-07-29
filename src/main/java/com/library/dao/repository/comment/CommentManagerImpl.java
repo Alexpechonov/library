@@ -6,6 +6,7 @@ import com.library.dao.repository.core.GenericManagerImpl;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -25,5 +26,17 @@ public class CommentManagerImpl extends GenericManagerImpl<Comment> implements C
         JPAQuery query = new JPAQuery(entityManager);
         query.from(comment).where(comment.step().id.eq(stepId));
         return query.list(comment);
+    }
+
+    @Override
+    public void deleteAllForUser(Long userId) {
+        Query query = entityManager.createNativeQuery("DELETE FROM comment c WHERE c.user_id = " + userId);
+        query.executeUpdate();
+    }
+
+    @Override
+    public void deleteAllForStep(Long stepId) {
+        Query query = entityManager.createNativeQuery("DELETE FROM comment c WHERE c.step = " + stepId);
+        query.executeUpdate();
     }
 }

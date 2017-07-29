@@ -19,7 +19,7 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
-@Table(name = "COMMENT")
+@Table(name = "COMMENTS")
 public class Comment implements ModelObject {
 
     @Id

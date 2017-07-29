@@ -10,4 +10,8 @@ import java.util.List;
  */
 public interface CommentManager extends GenericManager<Comment> {
     List<Comment> getAllByStep(Long stepId);
+
+    void deleteAllForUser(Long userId);
+
+    void deleteAllForStep(Long stepId);
 }

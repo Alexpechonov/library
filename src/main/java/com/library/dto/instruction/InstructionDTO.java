@@ -1,5 +1,6 @@
 package com.library.dto.instruction;
 
+import com.library.dto.category.CategoryDTO;
 import com.library.dto.core.AbstractDTO;
 import com.library.dto.tag.TagDTO;
 import com.library.dto.user.UserDTO;
@@ -16,6 +17,7 @@ public class InstructionDTO extends AbstractDTO {
     private List<StepDTO> steps;
     private List<TagDTO> tags;
     private UserDTO user;
+    private CategoryDTO category;
     private Date creationDate;
     private Date lastModifiedDate;
 
@@ -65,5 +67,13 @@ public class InstructionDTO extends AbstractDTO {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public CategoryDTO getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryDTO category) {
+        this.category = category;
     }
 }

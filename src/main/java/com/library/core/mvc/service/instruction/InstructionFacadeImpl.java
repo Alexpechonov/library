@@ -4,14 +4,18 @@ import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
 import com.library.core.mvc.service.step.StepFacade;
 import com.library.core.mvc.service.tag.TagFacade;
+import com.library.core.mvc.service.user.UserFacade;
 import com.library.dao.exceptions.ManagerException;
+import com.library.dao.model.entities.category.Category;
 import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.instruction.Part;
 import com.library.dao.model.entities.instruction.Step;
 import com.library.dao.model.entities.tag.Tag;
+import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.user.UserManager;
+import com.library.dto.category.CategoryDTO;
 import com.library.dto.instruction.InstructionDTO;
 import com.library.dto.instruction.StepDTO;
 import com.library.dto.tag.TagDTO;
@@ -50,6 +54,9 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     @Autowired
     private StepFacade stepFacade;
 
+    @Autowired
+    private UserFacade userFacade;
+
     @Override
     protected InstructionManager getManager() { return manager; }
 
@@ -62,11 +69,28 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
 
     @Override
     public InstructionDTO update(InstructionDTO dto) throws ManagerException {
+        return convertToDTO(beforeUpdate(dto));
+    }
+
+    @Override
+    public List<InstructionDTO> findAllByUser(Long userId) {
+        return convertToDTOList(manager.findAllByUser(userId));
+    }
+
+    private Instruction beforeUpdate(InstructionDTO dto) throws ManagerException {
+        dto.setUser(getAuthor(dto.getId()));
         dto.setLastModifiedDate(new Date());
         tagFacade.insertListIfNotExist(dto.getTags());
         dto.setTags(tagFacade.getUpdatedTags(dto.getTags()));
-        Instruction instruction =  addPositions(convertToModel(dto));
-        return convertToDTO(manager.update(instruction));
+        return addPositions(convertToModel(dto));
+    }
+
+    private UserDTO getAuthor(Long instructionId) throws ManagerException {
+        User author = userManager.findById(manager.findById(instructionId).getId());
+        if (!author.getId().equals(userFacade.getMe().getId()) && userFacade.getMe().getRole() != Role.ROLE_ADMIN) {
+            throw new ManagerException("You can't manage this instruction");
+        }
+        return userFacade.convertToDTO(author);
     }
 
     private Instruction addPositions(Instruction instruction) {
@@ -77,6 +101,15 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
             }
         }
         return instruction;
+    }
+
+    @Override
+    protected void beforeDelete(Long id) throws ServiceException {
+        try {
+            getAuthor(id);
+        } catch (ManagerException e) {
+            throw new ServiceException("You can't delete this instruction");
+        }
     }
 
     @Override
@@ -126,9 +159,13 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         try {
             user = userManager.findById(dto.getUser().getId());
         } catch (ManagerException e) {
-            logger.error("error in UserManager.findById", e);
+            logger.error("error in InstructionFacade.convertToModel", e);
         }
         result.setUser(user);
+        Category category = new Category();
+        category.setId(dto.getCategory().getId());
+        category.setName(dto.getCategory().getName());
+        result.setCategory(category);
         return result;
     }
 
@@ -151,6 +188,10 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         userDTO.setLastName(instruction.getUser().getLastName());
         userDTO.setImage(instruction.getUser().getImage());
         dto.setUser(userDTO);
+        CategoryDTO category = new CategoryDTO();
+        category.setId(instruction.getCategory().getId());
+        category.setName(instruction.getCategory().getName());
+        dto.setCategory(category);
         return dto;
     }
 

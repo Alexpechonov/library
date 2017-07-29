@@ -2,11 +2,14 @@ package com.library.core.mvc.service.user;
 
 import com.library.core.config.security.SecurityHelper;
 import com.library.core.mvc.service.core.GenericFacadeImpl;
+import com.library.core.mvc.service.exception.ServiceException;
+import com.library.core.mvc.service.instruction.InstructionFacade;
 import com.library.dao.exceptions.LoginException;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
+import com.library.dao.repository.comment.CommentManager;
 import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.user.UserManager;
 import com.library.dto.instruction.InstructionDTO;
@@ -30,19 +33,25 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
     private static final Logger logger = LoggerFactory.getLogger(UserFacadeImpl.class);
 
     @Autowired
-    private UserManager userManager;
+    private UserManager manager;
+
+    @Autowired
+    private InstructionManager instructionManager;
+
+    @Autowired
+    private CommentManager commentManager;
 
 //    @Autowired
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
     protected UserManager getManager() {
-        return userManager;
+        return manager;
     }
 
     @Override
     public User findByName(String name) {
-        return userManager.findByUserName(name);
+        return manager.findByUserName(name);
     }
 
     @Override
@@ -83,7 +92,7 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
     @Override
     public UserDTO getMe() {
         Authentication authentication = SecurityHelper.getAuthenticationWithCheck();
-        User byUsername = userManager.findByUserName(authentication.getName());
+        User byUsername = manager.findByUserName(authentication.getName());
 
         return convertToDTO(byUsername);
     }
@@ -94,10 +103,10 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
         user.setId(getMe().getId());
         user.setUserName(getMe().getUserName());
         if(user.getIdentity() == null) {
-            User currentUser = userManager.findById(user.getId());
+            User currentUser = manager.findById(user.getId());
             user.setIdentity(currentUser.getIdentity());
         }
-        return convertToDTO(userManager.update(user));
+        return convertToDTO(manager.update(user));
     }
 
     @Override
@@ -105,7 +114,16 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
         if (!encoder.matches(identity, user.getIdentity())) {
             throw new LoginException("Bad identity");
         }
+        if (!user.isEnabled()) {
+            throw new LoginException("Account blocked");
+        }
         return user;
+    }
+
+    @Override
+    protected void beforeDelete(Long id) throws ServiceException {
+        instructionManager.deleteAllForUser(id);
+        commentManager.deleteAllForUser(id);
     }
 
     @Override
@@ -114,7 +132,7 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
             dto.setIdentity(encoder.encode(dto.getIdentity()));
             dto.setRole(Role.ROLE_USER);
             dto.setEnabled(true);
-            userManager.insert(convertToModel(dto));
+            manager.insert(convertToModel(dto));
         } catch (ManagerException e) {
             logger.error("error in UserManager.insert", e);
         }

@@ -5,6 +5,7 @@ import com.library.core.mvc.service.part.PartFacade;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.instruction.Part;
 import com.library.dao.model.entities.instruction.Step;
+import com.library.dao.repository.comment.CommentManager;
 import com.library.dao.repository.step.StepManager;
 import com.library.dto.instruction.PartDTO;
 import com.library.dto.instruction.StepDTO;
@@ -27,6 +28,9 @@ public class StepFacadeImpl extends GenericFacadeImpl<StepManager, StepDTO, Step
 
     @Autowired
     private PartFacade partFacade;
+
+    @Autowired
+    private CommentManager commentManager;
 
     @Override
     protected StepManager getManager() {
@@ -65,5 +69,10 @@ public class StepFacadeImpl extends GenericFacadeImpl<StepManager, StepDTO, Step
             result.add(partFacade.convertToDTO(part));
         }
         return result;
+    }
+
+    @Override
+    protected void beforeDelete(Long id) {
+        commentManager.deleteAllForStep(id);
     }
 }
