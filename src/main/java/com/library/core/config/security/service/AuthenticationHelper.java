@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.library.core.config.security.exception.InvalidTokenAuthenticationException;
 import com.library.core.config.security.model.TokenPayload;
+import com.library.dao.model.entities.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -34,10 +35,11 @@ public class AuthenticationHelper {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public String generateToken(final Long userId) {
+    public String generateToken(final Long userId, final Role role) {
         try {
             TokenPayload payload = new TokenPayload(
                     userId,
+                    role,
                     Instant.now().getEpochSecond() + this.tokenExpirationTime
             );
 

@@ -1,5 +1,6 @@
 package com.library.core.config.security.model;
 
+import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,12 +18,14 @@ import java.util.Set;
 public class JwtUserDetails implements UserDetails {
 
     private Long id;
+    private Role role;
     private String username;
     private String identity;
     private Set<GrantedAuthority> authorities;
 
     public JwtUserDetails(User user) {
         this.id = user.getId();
+        this.role = user.getRole();
         this.username = user.getUserName();
         this.identity = user.getIdentity();
         this.authorities = new HashSet<>();
@@ -66,5 +69,9 @@ public class JwtUserDetails implements UserDetails {
 
     public Long getId() {
         return id;
+    }
+
+    public Role getRole() {
+        return role;
     }
 }
