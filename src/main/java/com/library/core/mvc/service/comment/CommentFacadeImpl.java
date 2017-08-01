@@ -2,6 +2,7 @@ package com.library.core.mvc.service.comment;
 
 import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
+import com.library.core.mvc.service.medal.MedalFacade;
 import com.library.dao.model.entities.comment.Comment;
 import com.library.dao.model.entities.instruction.Step;
 import com.library.dao.model.entities.user.User;
@@ -25,6 +26,9 @@ public class CommentFacadeImpl extends GenericFacadeImpl<CommentManager, Comment
 
     @Autowired
     private CommentManager manager;
+
+    @Autowired
+    private MedalFacade medalFacade;
 
     @Override
     protected CommentManager getManager() {
@@ -73,6 +77,11 @@ public class CommentFacadeImpl extends GenericFacadeImpl<CommentManager, Comment
     public CommentDTO insert(CommentDTO dto) throws ServiceException {
         dto.setCreationDate(new Date());
         return super.insert(dto);
+    }
+
+    @Override
+    protected void afterInsert(Comment comment) throws ServiceException {
+        medalFacade.checkComments();
     }
 
 

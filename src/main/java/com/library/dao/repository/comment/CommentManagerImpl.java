@@ -29,6 +29,14 @@ public class CommentManagerImpl extends GenericManagerImpl<Comment> implements C
     }
 
     @Override
+    public List<Comment> getAllByUser(Long userId) {
+        QComment comment = QComment.comment;
+        JPAQuery query = new JPAQuery(entityManager);
+        query.from(comment).where(comment.user().id.eq(userId));
+        return query.list(comment);
+    }
+
+    @Override
     public void deleteAllForUser(Long userId) {
         Query query = entityManager.createNativeQuery("DELETE FROM comments c WHERE c.user_id = " + userId);
         query.executeUpdate();

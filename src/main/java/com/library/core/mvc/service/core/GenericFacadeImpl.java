@@ -69,7 +69,7 @@ public abstract class GenericFacadeImpl<MANAGER extends GenericManager<MODEL>, D
     }
 
     public List<DTO> convertToDTOList(List<MODEL> modelList) {
-        List<DTO> result = new ArrayList<DTO>();
+        List<DTO> result = new ArrayList<>();
         for (MODEL model : modelList) {
             result.add(convertToDTO(model));
         }

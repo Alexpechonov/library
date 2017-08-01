@@ -1,6 +1,7 @@
 package com.library.dao.model.entities.user;
 
 import com.library.dao.model.core.ModelObject;
+import com.library.dao.model.entities.medal.Medal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,15 +10,19 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.List;
 
 /**
  * Created by user on 13.07.2017.
  */
 @Entity
 @Table(name = "USERS")
-public class User implements ModelObject{
+public class User implements ModelObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
@@ -52,6 +57,12 @@ public class User implements ModelObject{
 
     @Column(name = "IMAGE", length = 1000)
     private String image;
+
+    @ManyToMany()
+    @JoinTable(name = "USER_MEDAL",
+            joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "MEDAL_ID")})
+    private List<Medal> medals;
 
     @Override
     public Long getId() {
@@ -125,5 +136,13 @@ public class User implements ModelObject{
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public List<Medal> getMedals() {
+        return medals;
+    }
+
+    public void setMedals(List<Medal> medals) {
+        this.medals = medals;
     }
 }

@@ -3,6 +3,7 @@ package com.library.core.mvc.service.instruction;
 import com.library.core.mvc.service.category.CategoryFacade;
 import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
+import com.library.core.mvc.service.medal.MedalFacade;
 import com.library.core.mvc.service.step.StepFacade;
 import com.library.core.mvc.service.tag.TagFacade;
 import com.library.core.mvc.service.user.UserFacade;
@@ -70,6 +71,9 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     @Autowired
     private RatingManager ratingManager;
 
+    @Autowired
+    private MedalFacade medalFacade;
+
     @Override
     protected InstructionManager getManager() { return manager; }
 
@@ -80,6 +84,12 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         dto.setCategory(categoryFacade.findByName("In progress"));
         return super.insert(dto);
     }
+
+    protected void afterInsert(Instruction instruction) throws ServiceException {
+        medalFacade.checkInstructions();
+    }
+
+
 
     @Override
     public InstructionDTO update(InstructionDTO dto) throws ManagerException {

@@ -59,7 +59,7 @@ public class CategoryFacadeImpl extends GenericFacadeImpl<CategoryManager, Categ
 
     @Override
     public CategoryDTO insert(CategoryDTO dto) throws ServiceException {
-        if(manager.findByName(dto.getName()).getName().equals(dto.getName())) {
+        if(manager.findByName(dto.getName()) != null) {
             return null;
         }
         return super.insert(dto);

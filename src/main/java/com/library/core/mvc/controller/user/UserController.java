@@ -36,9 +36,9 @@ public class UserController {
         try {
             dto = service.findById(id);
         } catch (ManagerException e) {
-            return new ResponseEntity<UserDTO>(new UserDTO(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new UserDTO(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<UserDTO>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,8 +47,8 @@ public class UserController {
         try {
             token = service.login(dto);
         } catch (Exception e) {
-            return new ResponseEntity<String>(new String(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new String(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>(token, HttpStatus.OK);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 }

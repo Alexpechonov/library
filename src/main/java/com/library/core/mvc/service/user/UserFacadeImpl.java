@@ -4,16 +4,14 @@ import com.library.core.config.security.SecurityHelper;
 import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
 import com.library.core.mvc.service.instruction.InstructionFacade;
+import com.library.core.mvc.service.medal.MedalFacade;
 import com.library.dao.exceptions.LoginException;
 import com.library.dao.exceptions.ManagerException;
-import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.comment.CommentManager;
-import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.rating.RatingManager;
 import com.library.dao.repository.user.UserManager;
-import com.library.dto.instruction.InstructionDTO;
 import com.library.dto.user.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +43,9 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
     @Autowired
     private RatingManager ratingManager;
 
+    @Autowired
+    private MedalFacade medalFacade;
+
 //    @Autowired
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -73,6 +74,7 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setImage(dto.getImage());
+        user.setMedals(medalFacade.convertToModelList(dto.getMedals()));
         return user;
     }
 
@@ -90,6 +92,7 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setImage(user.getImage());
+        dto.setMedals(medalFacade.convertToDTOList(user.getMedals()));
         return dto;
     }
 

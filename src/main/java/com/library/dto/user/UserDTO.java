@@ -2,6 +2,9 @@ package com.library.dto.user;
 
 import com.library.dao.model.entities.user.Role;
 import com.library.dto.core.AbstractDTO;
+import com.library.dto.medal.MedalDTO;
+
+import java.util.List;
 
 /**
  * Created by user on 13.07.2017.
@@ -16,6 +19,7 @@ public class UserDTO extends AbstractDTO {
     private String firstName;
     private String lastName;
     private String about;
+    private List<MedalDTO> medals;
 
     public String getUserName() {
         return userName;
@@ -79,5 +83,13 @@ public class UserDTO extends AbstractDTO {
 
     public void setIdentity(String identity) {
         this.identity = identity;
+    }
+
+    public List<MedalDTO> getMedals() {
+        return medals;
+    }
+
+    public void setMedals(List<MedalDTO> medals) {
+        this.medals = medals;
     }
 }

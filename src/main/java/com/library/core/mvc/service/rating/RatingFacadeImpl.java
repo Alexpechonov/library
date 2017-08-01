@@ -69,6 +69,15 @@ public class RatingFacadeImpl extends GenericFacadeImpl<RatingManager, RatingDTO
     }
 
     @Override
+    public RatingDTO update(RatingDTO dto) throws ManagerException {
+        Rating rating = manager.getByUserAndInstruction(dto.getUser().getId(), dto.getInstruction().getId());
+        if (rating != null) {
+            dto.setId(rating.getId());
+        }
+        return super.update(dto);
+    }
+
+    @Override
     public List<RatingDTO> findAllByInstruction(Long instructionId) throws ServiceException {
         try {
             return convertToDTOList(manager.findAllByInstruction(instructionId));
