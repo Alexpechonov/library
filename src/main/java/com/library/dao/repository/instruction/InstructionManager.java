@@ -11,6 +11,4 @@ import java.util.List;
  */
 public interface InstructionManager extends GenericManager<Instruction> {
     List<Instruction> findAllByUser(Long userId);
-
-    void deleteAllForUser(Long userId);
 }

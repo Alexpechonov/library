@@ -48,7 +48,7 @@ public class Instruction implements ModelObject {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Step> steps;
 
-    @ManyToMany(targetEntity = Tag.class)
+    @ManyToMany(cascade=CascadeType.ALL)
     @JoinTable(name = "INSTRUCTION_TAG",
             joinColumns = @JoinColumn(name = "INSTRUCTION_ID"),
             inverseJoinColumns = @JoinColumn(name ="TAG_ID"))

@@ -3,10 +3,12 @@ package com.library;
  * Created by user on 05.07.2017.
  */
 
+import com.library.core.mvc.service.category.CategoryService;
 import com.library.core.mvc.service.instruction.InstructionService;
 import com.library.core.mvc.service.tag.TagService;
 import com.library.core.mvc.service.user.UserService;
 import com.library.dao.model.entities.instruction.PartType;
+import com.library.dto.category.CategoryDTO;
 import com.library.dto.instruction.InstructionDTO;
 import com.library.dto.instruction.PartDTO;
 import com.library.dto.instruction.StepDTO;
@@ -30,8 +32,11 @@ public class ServerApplication {
 
     @Bean
     CommandLineRunner bootstrap(final TagService tagService, final InstructionService instructionService,
-                                final UserService userService) {
+                                final UserService userService, final CategoryService categoryService) {
         return (args) -> {
+            CategoryDTO category = new CategoryDTO();
+            category.setName("In progress");
+            categoryService.insert(category);
 //            tagService.insert(
 //                    new TagDTO("Peter")
 //            );

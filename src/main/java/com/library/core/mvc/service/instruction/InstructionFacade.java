@@ -10,6 +10,7 @@ import java.util.List;
  * Created by user on 21.07.2017.
  */
 public interface InstructionFacade extends GenericFacade<InstructionDTO, Instruction> {
-
     List<InstructionDTO> findAllByUser(Long userId);
+
+    void deleteAllForUser(Long userId);
 }

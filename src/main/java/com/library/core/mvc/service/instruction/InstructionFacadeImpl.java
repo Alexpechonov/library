@@ -1,5 +1,6 @@
 package com.library.core.mvc.service.instruction;
 
+import com.library.core.mvc.service.category.CategoryFacade;
 import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
 import com.library.core.mvc.service.step.StepFacade;
@@ -13,7 +14,10 @@ import com.library.dao.model.entities.instruction.Step;
 import com.library.dao.model.entities.tag.Tag;
 import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
+import com.library.dao.repository.category.CategoryManager;
+import com.library.dao.repository.comment.CommentManager;
 import com.library.dao.repository.instruction.InstructionManager;
+import com.library.dao.repository.rating.RatingManager;
 import com.library.dao.repository.user.UserManager;
 import com.library.dto.category.CategoryDTO;
 import com.library.dto.instruction.InstructionDTO;
@@ -57,6 +61,15 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     @Autowired
     private UserFacade userFacade;
 
+    @Autowired
+    private CategoryFacade categoryFacade;
+
+    @Autowired
+    private CommentManager commentManager;
+
+    @Autowired
+    private RatingManager ratingManager;
+
     @Override
     protected InstructionManager getManager() { return manager; }
 
@@ -64,17 +77,26 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     public InstructionDTO insert(InstructionDTO dto) throws ServiceException {
         dto.setCreationDate(new Date());
         dto.setLastModifiedDate(new Date());
+        dto.setCategory(categoryFacade.findByName("In progress"));
         return super.insert(dto);
     }
 
     @Override
     public InstructionDTO update(InstructionDTO dto) throws ManagerException {
-        return convertToDTO(beforeUpdate(dto));
+        return convertToDTO(manager.update(beforeUpdate(dto)));
     }
 
     @Override
     public List<InstructionDTO> findAllByUser(Long userId) {
         return convertToDTOList(manager.findAllByUser(userId));
+    }
+
+    @Override
+    public void deleteAllForUser(Long userId) {
+        List<Instruction> instructions = manager.findAllByUser(userId);
+        for (Instruction instruction: instructions) {
+            remove(instruction.getId());
+        }
     }
 
     private Instruction beforeUpdate(InstructionDTO dto) throws ManagerException {
@@ -86,7 +108,7 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     }
 
     private UserDTO getAuthor(Long instructionId) throws ManagerException {
-        User author = userManager.findById(manager.findById(instructionId).getId());
+        User author = userManager.findById(manager.findById(instructionId).getUser().getId());
         if (!author.getId().equals(userFacade.getMe().getId()) && userFacade.getMe().getRole() != Role.ROLE_ADMIN) {
             throw new ManagerException("You can't manage this instruction");
         }
@@ -103,13 +125,40 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         return instruction;
     }
 
-    @Override
-    protected void beforeDelete(Long id) throws ServiceException {
+    private void checkAccess(Long instructionId)  throws ServiceException {
         try {
-            getAuthor(id);
+            getAuthor(instructionId);
         } catch (ManagerException e) {
             throw new ServiceException("You can't delete this instruction");
         }
+    }
+
+    private void stepsBeforeDelete(Long id) {
+        try {
+            for (Step step: manager.findById(id).getSteps()) {
+                commentManager.deleteAllForStep(step.getId());
+            }
+        } catch (ManagerException e) {
+            throw new ServiceException("Bad id");
+        }
+    }
+
+    private void deleteLinkWIthTags(Long instructionId) throws ServiceException {
+        try {
+            Instruction instruction = manager.findById(instructionId);
+            instruction.setTags(new ArrayList<>());
+            manager.update(instruction);
+        } catch (ManagerException e) {
+            throw new ServiceException("Error in InstructionFacade.deleteLinks");
+        }
+    }
+
+    @Override
+    protected void beforeDelete(Long id) throws ServiceException {
+        checkAccess(id);
+        stepsBeforeDelete(id);
+        deleteLinkWIthTags(id);
+        ratingManager.deleteAllForInstruction(id);
     }
 
     @Override

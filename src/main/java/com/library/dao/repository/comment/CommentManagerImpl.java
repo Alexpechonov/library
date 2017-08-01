@@ -30,13 +30,13 @@ public class CommentManagerImpl extends GenericManagerImpl<Comment> implements C
 
     @Override
     public void deleteAllForUser(Long userId) {
-        Query query = entityManager.createNativeQuery("DELETE FROM comment c WHERE c.user_id = " + userId);
+        Query query = entityManager.createNativeQuery("DELETE FROM comments c WHERE c.user_id = " + userId);
         query.executeUpdate();
     }
 
     @Override
     public void deleteAllForStep(Long stepId) {
-        Query query = entityManager.createNativeQuery("DELETE FROM comment c WHERE c.step = " + stepId);
+        Query query = entityManager.createNativeQuery("DELETE FROM comments c WHERE c.step = " + stepId);
         query.executeUpdate();
     }
 }

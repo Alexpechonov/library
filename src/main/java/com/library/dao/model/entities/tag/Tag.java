@@ -35,12 +35,6 @@ public class Tag implements ModelObject {
     @Column(name = "NAME", unique = true, nullable = false, length = 45)
     private String name;
 
-    @ManyToMany(targetEntity = Instruction.class)
-    @JoinTable(name = "INSTRUCTION_TAG",
-            joinColumns = @JoinColumn(name = "TAG_ID"),
-            inverseJoinColumns = @JoinColumn(name = "INSTRUCTION_ID"))
-    private List<Instruction> instructions;
-
     @Override
     public Long getId() {
         return id;
@@ -57,13 +51,5 @@ public class Tag implements ModelObject {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Instruction> getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(List<Instruction> instructions) {
-        this.instructions = instructions;
     }
 }

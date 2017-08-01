@@ -1,6 +1,7 @@
 package com.library.core.mvc.service.category;
 
 import com.library.core.mvc.service.core.GenericFacadeImpl;
+import com.library.core.mvc.service.exception.ServiceException;
 import com.library.dao.model.entities.category.Category;
 import com.library.dao.repository.category.CategoryManager;
 import com.library.dto.category.CategoryDTO;
@@ -49,5 +50,18 @@ public class CategoryFacadeImpl extends GenericFacadeImpl<CategoryManager, Categ
         dto.setId(category.getId());
         dto.setName(category.getName());
         return dto;
+    }
+
+    @Override
+    public CategoryDTO findByName(String name) {
+        return convertToDTO(manager.findByName(name));
+    }
+
+    @Override
+    public CategoryDTO insert(CategoryDTO dto) throws ServiceException {
+        if(manager.findByName(dto.getName()).getName().equals(dto.getName())) {
+            return null;
+        }
+        return super.insert(dto);
     }
 }

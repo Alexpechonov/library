@@ -34,7 +34,7 @@ public class ProtectedInstructionController extends InstructionController {
         } catch (ServiceException e) {
             LOGGER.error("error in ProtectedInstructionController.create");
         }
-        return new ResponseEntity<InstructionDTO>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,7 +45,7 @@ public class ProtectedInstructionController extends InstructionController {
         } catch (ManagerException e) {
             LOGGER.error("error in InstructionService.update()");
         }
-        return new ResponseEntity<InstructionDTO>(instruction, HttpStatus.OK);
+        return new ResponseEntity<>(instruction, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)

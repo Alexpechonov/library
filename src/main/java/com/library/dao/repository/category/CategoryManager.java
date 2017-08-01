@@ -7,4 +7,5 @@ import com.library.dao.repository.core.GenericManager;
  * Created by user on 28.07.2017.
  */
 public interface CategoryManager extends GenericManager<Category> {
+    Category findByName(String name);
 }

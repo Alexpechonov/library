@@ -11,6 +11,7 @@ import com.library.dao.model.entities.user.Role;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.comment.CommentManager;
 import com.library.dao.repository.instruction.InstructionManager;
+import com.library.dao.repository.rating.RatingManager;
 import com.library.dao.repository.user.UserManager;
 import com.library.dto.instruction.InstructionDTO;
 import com.library.dto.user.UserDTO;
@@ -36,10 +37,13 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
     private UserManager manager;
 
     @Autowired
-    private InstructionManager instructionManager;
+    private InstructionFacade instructionFacade;
 
     @Autowired
     private CommentManager commentManager;
+
+    @Autowired
+    private RatingManager ratingManager;
 
 //    @Autowired
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -97,15 +101,19 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
         return convertToDTO(byUsername);
     }
 
+    private Long checkUser(Long userId) throws ManagerException {
+        if (!userId.equals(getMe().getId()) && getMe().getRole() != Role.ROLE_ADMIN) {
+            throw new ManagerException("You can't update this user");
+        }
+        return userId;
+    }
+
     @Override
     public UserDTO update(UserDTO dto) throws ManagerException {
         User user = convertToModel(dto);
-        user.setId(getMe().getId());
-        user.setUserName(getMe().getUserName());
-        if(user.getIdentity() == null) {
-            User currentUser = manager.findById(user.getId());
-            user.setIdentity(currentUser.getIdentity());
-        }
+        user.setId(checkUser(dto.getId()));
+        user.setUserName(manager.findById(user.getId()).getUserName());
+        user.setIdentity(manager.findById(user.getId()).getIdentity());
         return convertToDTO(manager.update(user));
     }
 
@@ -122,8 +130,9 @@ public class UserFacadeImpl extends GenericFacadeImpl<UserManager, UserDTO, User
 
     @Override
     protected void beforeDelete(Long id) throws ServiceException {
-        instructionManager.deleteAllForUser(id);
+        instructionFacade.deleteAllForUser(id);
         commentManager.deleteAllForUser(id);
+        ratingManager.deleteAllForUser(id);
     }
 
     @Override

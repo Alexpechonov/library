@@ -1,6 +1,5 @@
 package com.library.dao.repository.instruction;
 
-import com.library.dao.model.entities.comment.QComment;
 import com.library.dao.model.entities.instruction.Instruction;
 import com.library.dao.model.entities.instruction.QInstruction;
 import com.library.dao.repository.core.GenericManagerImpl;
@@ -26,11 +25,5 @@ public class InstructionManagerImpl extends GenericManagerImpl<Instruction> impl
         JPAQuery query = new JPAQuery(entityManager);
         query.from(instruction).where(instruction.user().id.eq(userId));
         return query.list(instruction);
-    }
-
-    @Override
-    public void deleteAllForUser(Long userId) {
-        Query query = entityManager.createNativeQuery("DELETE FROM instruction c WHERE c.user_id = " + userId);
-        query.executeUpdate();
     }
 }

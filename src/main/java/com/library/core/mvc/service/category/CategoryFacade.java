@@ -8,4 +8,5 @@ import com.library.dto.category.CategoryDTO;
  * Created by user on 28.07.2017.
  */
 public interface CategoryFacade extends GenericFacade<CategoryDTO, Category> {
+    CategoryDTO findByName(String name);
 }
