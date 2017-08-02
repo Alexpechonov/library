@@ -5,6 +5,7 @@ import com.library.core.mvc.service.exception.ServiceException;
 import com.library.core.mvc.service.user.UserFacade;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.medal.Medal;
+import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.comment.CommentManager;
 import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.medal.MedalManager;
@@ -61,7 +62,7 @@ public class MedalFacadeImpl extends GenericFacadeImpl<MedalManager, MedalDTO, M
 
     @Override
     public MedalDTO insert(MedalDTO dto) throws ServiceException {
-        if(manager.findByName(dto.getName()) != null) {
+        if (manager.findByName(dto.getName()) != null) {
             return null;
         }
         return super.insert(dto);
@@ -70,51 +71,80 @@ public class MedalFacadeImpl extends GenericFacadeImpl<MedalManager, MedalDTO, M
 
     @Override
     public void checkInstructions() throws ServiceException {
-        Integer count = instructionManager.findAllByUser(userFacade.getMe().getId()).size();
+        Long userId = userFacade.getMe().getId();
+        Integer count = instructionManager.findAllByUser(userId).size();
         switch (count) {
             case 1:
-                addMedal("Novice writer");
+                addMedal("Novice writer", userId);
                 break;
             case 5:
-                addMedal("Writer");
+                addMedal("Writer", userId);
                 break;
             case 10:
-                addMedal("Expert");
+                addMedal("Expert", userId);
                 break;
         }
     }
 
     @Override
     public void checkComments() throws ServiceException {
-        Integer count = commentManager.getAllByUser(userFacade.getMe().getId()).size();
+        Long userId = userFacade.getMe().getId();
+        Integer count = commentManager.getAllByUser(userId).size();
         switch (count) {
             case 1:
-                addMedal("Novice commentator");
+                addMedal("Novice commentator", userId);
                 break;
             case 5:
-                addMedal("Commentator");
+                addMedal("Commentator", userId);
                 break;
         }
     }
 
-    private void addMedal(String name) throws ServiceException {
-        UserDTO user = userFacade.getMe();
-        for (MedalDTO dto: user.getMedals()) {
-            if (dto.getName().equals(name)) return;
-        }
-        user.getMedals().add(convertToDTO(manager.findByName(name)));
+    @Override
+    public void addMedal(String name, Long userId) throws ServiceException {
         try {
+            UserDTO user = userFacade.findById(userId);
+            if (checkIfExist(name, user)) return;
+            user.getMedals().add(convertToDTO(manager.findByName(name)));
             userFacade.update(user);
         } catch (ManagerException e) {
             throw new ServiceException("Error in MedalFacade.addMedal");
         }
     }
 
+    private boolean checkIfExist(String name, UserDTO user) {
+        for (MedalDTO dto : user.getMedals()) {
+            if (dto.getName().equals(name)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void deleteMedal(String name, Long userId) throws ServiceException {
+        try {
+            UserDTO user = removeMedal(name, userFacade.findById(userId));
+            if (user == null) return;
+            userFacade.update(user);
+        } catch (ManagerException e) {
+            throw new ServiceException("Error in MedalFacade.addMedal");
+        }
+    }
+
+    private UserDTO removeMedal(String name, UserDTO user) {
+        for (MedalDTO dto : user.getMedals()) {
+            if (dto.getName().equals(name)) {
+                user.getMedals().remove(dto);
+                return user;
+            }
+        }
+        return null;
+    }
+
     @Override
     public List<Medal> convertToModelList(List<MedalDTO> dtos) {
         if (dtos == null) return null;
         List<Medal> medals = new ArrayList<>();
-        for (MedalDTO dto: dtos) {
+        for (MedalDTO dto : dtos) {
             medals.add(convertToModel(dto));
         }
         return medals;

@@ -34,6 +34,7 @@ public class RatingFacadeImpl extends GenericFacadeImpl<RatingManager, RatingDTO
     @Override
     public Rating convertToModel(RatingDTO dto) {
         Rating rating = new Rating();
+        if (dto == null) return rating;
         rating.setId(dto.getId());
         rating.setRate(dto.getRate());
         User user = new User();
@@ -48,6 +49,7 @@ public class RatingFacadeImpl extends GenericFacadeImpl<RatingManager, RatingDTO
     @Override
     public RatingDTO convertToDTO(Rating rating) {
         RatingDTO dto = new RatingDTO();
+        if (rating == null) return dto;
         dto.setId(rating.getId());
         dto.setRate(rating.getRate());
         UserDTO user = new UserDTO();

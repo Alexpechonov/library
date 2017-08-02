@@ -36,7 +36,7 @@ public class ProtectedCategoryController extends CategoryController {
         } catch (ServiceException e) {
             LOGGER.error("error in ProtectedCategoryController.create");
         }
-        return new ResponseEntity<CategoryDTO>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -48,7 +48,7 @@ public class ProtectedCategoryController extends CategoryController {
         } catch (ManagerException e) {
             LOGGER.error("error in CategoryController.update()");
         }
-        return new ResponseEntity<CategoryDTO>(category, HttpStatus.OK);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

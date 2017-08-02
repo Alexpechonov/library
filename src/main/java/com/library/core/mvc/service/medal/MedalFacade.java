@@ -16,4 +16,8 @@ public interface MedalFacade extends GenericFacade<MedalDTO, Medal> {
     void checkComments() throws ServiceException;
 
     List<Medal> convertToModelList(List<MedalDTO> dtos);
+
+    void addMedal(String name, Long userId) throws ServiceException;
+
+    void deleteMedal(String name, Long userId) throws ServiceException;
 }
