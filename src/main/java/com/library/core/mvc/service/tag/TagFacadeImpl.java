@@ -2,6 +2,7 @@ package com.library.core.mvc.service.tag;
 
 import com.library.core.mvc.service.core.GenericFacadeImpl;
 import com.library.core.mvc.service.exception.ServiceException;
+import com.library.core.mvc.service.instruction.InstructionFacade;
 import com.library.core.mvc.service.part.PartFacade;
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.entities.tag.Tag;
@@ -27,8 +28,13 @@ public class TagFacadeImpl extends GenericFacadeImpl<TagManager, TagDTO, Tag> im
     @Autowired
     private TagManager manager;
 
+    @Autowired
+    private InstructionFacade instructionFacade;
+
     @Override
-    protected TagManager getManager() { return manager; }
+    protected TagManager getManager() {
+        return manager;
+    }
 
 
     @Override
@@ -53,18 +59,10 @@ public class TagFacadeImpl extends GenericFacadeImpl<TagManager, TagDTO, Tag> im
         return dto;
     }
 
-    public List<TagDTO> convertToDtoList(List<Tag> tags) {
-        List<TagDTO> result = new ArrayList<TagDTO>();
-        for (Tag tag : tags) {
-            result.add(convertToDTO(tag));
-        }
-        return result;
-    }
-
     @Override
     public void insertListIfNotExist(List<TagDTO> tags) throws ServiceException {
-        for(TagDTO dto: tags) {
-            if(manager.findByName(dto.getName()) == null) {
+        for (TagDTO dto : tags) {
+            if (manager.findByName(dto.getName()) == null) {
                 insert(dto);
             }
         }
@@ -72,9 +70,9 @@ public class TagFacadeImpl extends GenericFacadeImpl<TagManager, TagDTO, Tag> im
 
     @Override
     public List<TagDTO> getUpdatedTags(List<TagDTO> tags) {
-        for(TagDTO dto: tags) {
-              dto.setId(manager.findByName(dto.getName()).getId());
-            }
+        for (TagDTO dto : tags) {
+            dto.setId(manager.findByName(dto.getName()).getId());
+        }
         return tags;
     }
 }

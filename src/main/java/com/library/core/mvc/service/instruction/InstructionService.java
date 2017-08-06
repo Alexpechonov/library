@@ -10,4 +10,12 @@ import java.util.List;
  */
 public interface InstructionService extends GenericService<InstructionDTO> {
     List<InstructionDTO> findAllByUser(Long userId);
+
+    List<InstructionDTO> findAllByTag(Long tagId);
+
+    List<InstructionDTO> findAllSortedByCreatedDate(int count);
+
+    List<InstructionDTO> getPopular(int count);
+
+    List<InstructionDTO> findAllByCategory(Long categoryId);
 }

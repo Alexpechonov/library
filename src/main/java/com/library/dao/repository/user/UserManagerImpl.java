@@ -3,6 +3,7 @@ package com.library.dao.repository.user;
 import com.library.dao.model.entities.user.QUser;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.core.GenericManagerImpl;
+import com.library.dto.search.SearchDTO;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * Created by user on 13.07.2017.

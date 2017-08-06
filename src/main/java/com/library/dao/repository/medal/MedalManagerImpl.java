@@ -5,8 +5,11 @@ import com.library.dao.model.entities.medal.Medal;
 import com.library.dao.model.entities.medal.QMedal;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.core.GenericManagerImpl;
+import com.library.dto.search.SearchDTO;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by user on 01.08.2017.

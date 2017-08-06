@@ -5,6 +5,7 @@ import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.core.ModelObject;
 import com.library.dao.repository.core.GenericManager;
 import com.library.dto.core.AbstractDTO;
+import com.library.dto.search.SearchDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,7 @@ public abstract class GenericFacadeImpl<MANAGER extends GenericManager<MODEL>, D
             throw new ServiceException(e);
         }
     }
+
 
     public List<DTO> convertToDTOList(List<MODEL> modelList) {
         List<DTO> result = new ArrayList<>();

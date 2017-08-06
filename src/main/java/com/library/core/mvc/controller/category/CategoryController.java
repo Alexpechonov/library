@@ -1,6 +1,7 @@
 package com.library.core.mvc.controller.category;
 
 import com.library.core.mvc.service.category.CategoryService;
+import com.library.dao.exceptions.ManagerException;
 import com.library.dto.category.CategoryDTO;
 import com.library.dto.instruction.InstructionDTO;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +29,17 @@ public class CategoryController {
 
     @Autowired
     protected CategoryService service;
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CategoryDTO> getById(@PathVariable Long id) {
+        CategoryDTO dto;
+        try {
+            dto = service.findById(id);
+        } catch (ManagerException e) {
+            return new ResponseEntity<>(new CategoryDTO(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CategoryDTO>> getAll() {

@@ -19,6 +19,7 @@ import com.library.dao.repository.category.CategoryManager;
 import com.library.dao.repository.comment.CommentManager;
 import com.library.dao.repository.instruction.InstructionManager;
 import com.library.dao.repository.rating.RatingManager;
+import com.library.dao.repository.tag.TagManager;
 import com.library.dao.repository.user.UserManager;
 import com.library.dto.category.CategoryDTO;
 import com.library.dto.instruction.InstructionDTO;
@@ -31,10 +32,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -74,8 +77,13 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     @Autowired
     private MedalFacade medalFacade;
 
+    @Autowired
+    private TagManager tagManager;
+
     @Override
-    protected InstructionManager getManager() { return manager; }
+    protected InstructionManager getManager() {
+        return manager;
+    }
 
     @Override
     public InstructionDTO insert(InstructionDTO dto) throws ServiceException {
@@ -88,7 +96,6 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     protected void afterInsert(Instruction instruction) throws ServiceException {
         medalFacade.checkInstructions();
     }
-
 
 
     @Override
@@ -104,9 +111,29 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     @Override
     public void deleteAllForUser(Long userId) {
         List<Instruction> instructions = manager.findAllByUser(userId);
-        for (Instruction instruction: instructions) {
+        for (Instruction instruction : instructions) {
             remove(instruction.getId());
         }
+    }
+
+    @Override
+    public List<InstructionDTO> findAllByTag(Long tagId) {
+        return convertToDTOList(getByTag(manager.findAll(), tagId));
+    }
+
+    private List<Instruction> getByTag(List<Instruction> instructions, Long tagId) {
+        for (Iterator<Instruction> iterator = instructions.iterator(); iterator.hasNext(); ) {
+            Instruction instruction = iterator.next();
+            if (!checkTag(instruction, tagId)) iterator.remove();
+        }
+        return instructions;
+    }
+
+    private boolean checkTag(Instruction instruction, Long tagId) {
+        for (Tag tag : instruction.getTags()) {
+            if (tag.getId().equals(tagId)) return true;
+        }
+        return false;
     }
 
     private Instruction beforeUpdate(InstructionDTO dto) throws ManagerException {
@@ -126,16 +153,16 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     }
 
     private Instruction addPositions(Instruction instruction) {
-        for(int i = 0; i < instruction.getSteps().size(); i++) {
+        for (int i = 0; i < instruction.getSteps().size(); i++) {
             instruction.getSteps().get(i).setPosition(i);
-            for(int j = 0; j < instruction.getSteps().get(i).getParts().size(); j++) {
+            for (int j = 0; j < instruction.getSteps().get(i).getParts().size(); j++) {
                 instruction.getSteps().get(i).getParts().get(j).setPosition(j);
             }
         }
         return instruction;
     }
 
-    private void checkAccess(Long instructionId)  throws ServiceException {
+    private void checkAccess(Long instructionId) throws ServiceException {
         try {
             getAuthor(instructionId);
         } catch (ManagerException e) {
@@ -145,7 +172,7 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
 
     private void stepsBeforeDelete(Long id) {
         try {
-            for (Step step: manager.findById(id).getSteps()) {
+            for (Step step : manager.findById(id).getSteps()) {
                 commentManager.deleteAllForStep(step.getId());
             }
         } catch (ManagerException e) {
@@ -179,6 +206,34 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
         return convertToDTO(instruction);
     }
 
+    @Override
+    public List<InstructionDTO> findAllSortByCreationDate(int count) {
+        return getInstructionsByIds(manager.findSortedByCreationDate(count));
+    }
+
+    @Override
+    public List<InstructionDTO> getPopular(int count) {
+        return getInstructionsByIds(manager.getPopular(count));
+    }
+
+    @Override
+    public List<InstructionDTO> findAllByCategory(Long categoryId) {
+        return convertToDTOList(manager.findAllByCategory(categoryId));
+    }
+
+    @Override
+    public List<InstructionDTO> getInstructionsByIds(List<BigInteger> ids) {
+        List<InstructionDTO> instructions = new ArrayList<>();
+        for (BigInteger id: ids) {
+            try {
+                instructions.add(findById(id.longValue()));
+            } catch (ManagerException e) {
+                logger.error("Error in InstructionFacade.findAllSortByCreationDate");
+            }
+        }
+        return instructions;
+    }
+
     private Instruction sortSteps(Instruction instruction) {
         if (instruction.getSteps().size() > 0) {
             Collections.sort(instruction.getSteps(), new Comparator<Step>() {
@@ -192,7 +247,7 @@ public class InstructionFacadeImpl extends GenericFacadeImpl<InstructionManager,
     }
 
     private Instruction sortParts(Instruction instruction) {
-        for (Step step: instruction.getSteps()) {
+        for (Step step : instruction.getSteps()) {
             if (step.getParts().size() > 0) {
                 Collections.sort(step.getParts(), new Comparator<Part>() {
                     @Override

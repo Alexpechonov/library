@@ -18,10 +18,32 @@ public class InstructionServiceImpl extends GenericServiceImpl<InstructionFacade
     private InstructionFacade facade;
 
     @Override
-    protected InstructionFacade getFacade() { return facade; }
+    protected InstructionFacade getFacade() {
+        return facade;
+    }
 
     @Override
     public List<InstructionDTO> findAllByUser(Long userId) {
         return facade.findAllByUser(userId);
+    }
+
+    @Override
+    public List<InstructionDTO> findAllByTag(Long tagId) {
+        return facade.findAllByTag(tagId);
+    }
+
+    @Override
+    public List<InstructionDTO> findAllSortedByCreatedDate(int count) {
+        return facade.findAllSortByCreationDate(count);
+    }
+
+    @Override
+    public List<InstructionDTO> getPopular(int count) {
+        return facade.getPopular(count);
+    }
+
+    @Override
+    public List<InstructionDTO> findAllByCategory(Long categoryId) {
+        return facade.findAllByCategory(categoryId);
     }
 }

@@ -6,6 +6,7 @@ import com.library.dao.model.entities.tag.QTag;
 import com.library.dao.model.entities.tag.Tag;
 import com.library.dao.model.entities.user.User;
 import com.library.dao.repository.core.GenericManagerImpl;
+import com.library.dto.search.SearchDTO;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,4 @@ public class TagManagerImpl extends GenericManagerImpl<Tag> implements TagManage
         query.from(tag).where(tag.name.equalsIgnoreCase(name));
         return query.singleResult(tag);
     }
-
-
 }

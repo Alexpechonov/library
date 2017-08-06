@@ -45,9 +45,31 @@ public class InstructionController {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/creationDate/{count}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<InstructionDTO>> getByCreationDate(@PathVariable int count) {
+        return new ResponseEntity<>(service.findAllSortedByCreatedDate(count), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/popular/{count}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<InstructionDTO>> getPopular(@PathVariable int count) {
+        return new ResponseEntity<>(service.getPopular(count), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<InstructionDTO>> getAllForUser(@PathVariable Long id) {
         List<InstructionDTO> instructions = service.findAllByUser(id);
+        return new ResponseEntity<>(instructions, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/category/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<InstructionDTO>> getAllForCategory(@PathVariable Long id) {
+        List<InstructionDTO> instructions = service.findAllByCategory(id);
+        return new ResponseEntity<>(instructions, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/tag/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<InstructionDTO>> getAllForTag(@PathVariable Long id) {
+        List<InstructionDTO> instructions = service.findAllByTag(id);
         return new ResponseEntity<>(instructions, HttpStatus.OK);
     }
 }

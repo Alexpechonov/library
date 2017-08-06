@@ -2,6 +2,7 @@ package com.library.dao.repository.core;
 
 import com.library.dao.exceptions.ManagerException;
 import com.library.dao.model.core.ModelObject;
+import com.library.dto.search.SearchDTO;
 
 import java.io.Serializable;
 import java.util.List;

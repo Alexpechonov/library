@@ -5,6 +5,7 @@ import com.library.dao.model.entities.instruction.QInstruction;
 import com.library.dao.model.entities.rating.QRating;
 import com.library.dao.model.entities.rating.Rating;
 import com.library.dao.repository.core.GenericManagerImpl;
+import com.library.dto.search.SearchDTO;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 
